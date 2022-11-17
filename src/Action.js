@@ -121,6 +121,7 @@ class Action {
       draft: isTrue(core.getInput('draft')),
       changelog: core.getInput('changelog') || 'CHANGELOG.md',
       version: core.getInput('changelog-entry') || '$version',
+      generateReleaseNotes: isTrue(core.getInput('generate_release_notes')),
     }
   }
 
@@ -156,6 +157,7 @@ class Action {
     const version = render(this.config.version)
     const ref = releaseCommit.id
     const prerelease = releaseCommit.message.match(this.config.prereleaseRegex) !== null
+    const generateReleaseNotes = this.config.generateReleaseNotes
 
     const changelog = await this.getChangelog(this.config.changelog, ref)
     const body = await this.extractChanges(changelog, version)
@@ -168,6 +170,7 @@ class Action {
       draft: this.config.draft,
       prerelease,
       target_commitish: ref,
+      generate_release_notes: generateReleaseNotes
     })
 
     const {
